@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH.unshift File.expand_path(File.join(__dir__, '../lib'))
+
+require 'huffman'
+
+case ARGV.first
+when 'encode'
+  Huffman::Static::Encoder.new(STDIN, STDOUT).encode!
+when 'decode'
+  Huffman::Decoder.new(STDIN, STDOUT).decode!
+else
+  puts 'invalid command'
+end
