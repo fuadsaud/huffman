@@ -21,8 +21,15 @@ module Huffman
         value <=> other.value
       end
 
+      def +(other)
+        value + other.to_i
+      end
+
+      def to_i
+        value
+      end
+
       def paths(current_path: '', paths_map: {})
-        p @left.left.class
         if @left.leaf?
           paths_map[@left.code] = current_path + '0'
         else

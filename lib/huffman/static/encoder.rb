@@ -18,28 +18,28 @@ module Huffman
         paths = tree.paths
 
         @output_stream.puts paths
-        # @output_stream.puts(input.each_char.map { |c| paths[c] + "\n" })
+        @output_stream.puts(input.each_char.map { |c| paths[c] }.join)
       end
 
       private
 
       def build_tree(frequencies)
-        nodes = frequencies.each.each_with_object(PQueue.new { |a, b| a.value < b.value }) do |(code, frequency), queue|
+        nodes = nodes_for_frequencies(frequencies).tap { |nodes|
+          nodes << combine_nodes(nodes.pop, nodes.pop) until nodes.size == 1
+        }.pop
+      end
+
+      def nodes_for_frequencies(frequencies)
+        frequencies.each.each_with_object(PQueue.new { |a, b| a.value < b.value }) do |(code, frequency), queue|
           queue << Node.new(value: frequency, code: code)
         end
+      end
 
-        until nodes.size == 1
-          low = [nodes.pop, nodes.pop]
-          parent = Node.new value: low.reduce(0) { |a, e| a + e.value },
-                            left: low.first,
-                            right: low.last
-
-          low.each { |n| n.parent = parent }
-
-          nodes << parent
-        end
-
-        nodes.pop
+      def combine_nodes(node_a, node_b)
+        Node.new(value: node_a + node_b, left: node_a, right: node_b).tap { |p|
+          node_a.parent = p
+          node_b.parent = p
+        }
       end
     end
   end
