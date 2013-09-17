@@ -1,5 +1,6 @@
 require 'bis'
 require 'powerpack'
+require 'pqueue'
 require 'huffman/static/node'
 require 'huffman/static/nil_node'
 
@@ -23,23 +24,19 @@ module Huffman
       private
 
       def build_tree(frequencies)
-        nodes = frequencies.each.each_with_object([]) do |(code, frequency), list|
-          list << Node.new(value: frequency, code: code)
+        nodes = frequencies.each.each_with_object(PQueue.new { |a, b| a.value < b.value }) do |(code, frequency), queue|
+          queue << Node.new(value: frequency, code: code)
         end
 
         until nodes.size == 1
-          smallest = nodes.min_by { |node| node.value }
-          nodes.delete(smallest)
+          low = [nodes.pop, nodes.pop]
+          parent = Node.new value: low.reduce(0) { |a, e| a + e.value },
+                            left: low.first,
+                            right: low.last
 
-          second_smallest = nodes.min_by { |node| node.value }
-          nodes.delete(second_smallest)
+          low.each { |n| n.parent = parent }
 
-          combined = Node.new(value: smallest.value + second_smallest.value,
-                              left: smallest, right: second_smallest)
-          smallest.parent = combined
-          second_smallest.parent = combined
-
-          nodes << combined
+          nodes << parent
         end
 
         nodes.pop

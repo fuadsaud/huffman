@@ -17,6 +17,10 @@ module Huffman
         !!@code
       end
 
+      def <=>(other)
+        value <=> other.value
+      end
+
       def paths(current_path: '', paths_map: {})
         p @left.left.class
         if @left.leaf?
