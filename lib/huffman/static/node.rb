@@ -29,17 +29,19 @@ module Huffman
         value
       end
 
-      def paths(current_path: Bis.new(0), paths_map: {})
+      def paths(current_path: Bis.new(0))
+        paths_map = {}
+
         if @left.leaf?
           paths_map[@left.code] = current_path.concat(0)
         else
-          @left.paths(current_path: current_path.concat(0), paths_map: paths_map)
+          paths_map.merge!(@left.paths(current_path: current_path.concat(0)))
         end
 
         if @right.leaf?
           paths_map[@right.code] = current_path.concat(1)
         else
-          @right.paths(current_path: current_path.concat(1), paths_map: paths_map)
+          paths_map.merge!(@right.paths(current_path: current_path.concat(1)))
         end
 
         paths_map
