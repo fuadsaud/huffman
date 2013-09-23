@@ -13,12 +13,12 @@ module Huffman
       end
 
       def encode!
-        input = @input_stream.read
-        tree = build_tree(input.chars.frequencies)
+        codes = @input_stream.read.chars.map(&:to_sym)
+        tree = build_tree(codes.frequencies)
         paths = tree.paths
 
         @output_stream.puts paths
-        @output_stream.puts(input.each_char.map { |c| paths[c] }.join)
+        @output_stream.puts(codes.map { |c| paths[c] }.join)
       end
 
       private
