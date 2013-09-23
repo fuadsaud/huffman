@@ -1,8 +1,8 @@
 require 'bis'
 require 'powerpack'
 require 'pqueue'
-require 'huffman/static/node'
-require 'huffman/static/nil_node'
+require 'huffman/static/link_node'
+require 'huffman/static/value_node'
 
 module Huffman
   module Static
@@ -31,12 +31,12 @@ module Huffman
 
       def nodes_for_frequencies(frequencies)
         frequencies.each.each_with_object(PQueue.new { |a, b| a.value < b.value }) do |(code, frequency), queue|
-          queue << Node.new(value: frequency, code: code)
+          queue << ValueNode.new(frequency, code)
         end
       end
 
       def combine_nodes(node_a, node_b)
-        Node.new(value: node_a + node_b, left: node_a, right: node_b).tap { |p|
+        LinkNode.new(node_a + node_b, left: node_a, right: node_b).tap { |p|
           node_a.parent = p
           node_b.parent = p
         }
