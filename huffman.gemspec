@@ -26,4 +26,5 @@ DESC
 
   s.add_dependency 'powerpack'
   s.add_dependency 'pqueue'
+  s.add_development_dependency 'rspec'
 end
