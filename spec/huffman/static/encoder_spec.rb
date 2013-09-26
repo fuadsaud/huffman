@@ -12,10 +12,12 @@ describe Huffman::Static::Encoder do
     end
 
     it 'encodes, duh!' do
-      expect(subject).to eq %({:u=><<00000>> 0, :a=><<00001>> 1,) +
-                            %( :d=><<0001>> 1, :f=><<001>> 1, :" ") +
-                            %(=><<01>> 1, :s=><<1>> 1}\n001000000) +
-                            %(0001000101100001000000001\n)
+      hex = [0x61, 0x73, 0x69, 0x64, 0x73, 0x61, 0x75, 0x64, 0x0a,
+             0x04, 0x61, 0x20, 0x03, 0x62, 0x20, 0x03, 0x63, 0x20,
+             0x02, 0x64, 0x20, 0x01, 0x31, 0x31, 0x0a, 0x67, 0x9f]
+
+      lol = hex.map(&:chr).join
+      expect(subject).to eq lol
     end
   end
 end

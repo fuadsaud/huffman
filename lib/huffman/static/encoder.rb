@@ -15,8 +15,9 @@ module Huffman
 
       def encode!
         codes = @input_stream.read.chars.map(&:ord)
+
         lengths = build_tree(codes.frequencies).paths.each_with_object({}) do |(code, path),  lengths|
-          lengths[code] = path.size
+          lengths[code] = path.size - 1
         end
 
         paths = build_tree2(lengths).paths
@@ -24,14 +25,13 @@ module Huffman
         @output_stream.write lengths.size.chr
         @output_stream.write lengths.map { |code, lenght| "#{ code.chr } #{ lengths[code].chr }" }.join
 
-        bitset = codes.each_with_object(Bis.new(0)) do |code, bitset|
+        bitset = codes.inject(Bis.new(0)) do |bitset, code|
           bitset.concat(paths[code])
         end
 
         bitset.each_byte do |byte|
+          @output_stream.write byte.to_i.chr
         end
-
-        @output_stream.write codes.map { |c| paths[c] }.join
       end
 
       private
