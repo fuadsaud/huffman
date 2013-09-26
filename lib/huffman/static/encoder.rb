@@ -1,8 +1,9 @@
 require 'bis'
 require 'powerpack'
 require 'pqueue'
+require 'huffman/static/node'
 require 'huffman/static/link_node'
-require 'huffman/static/value_node'
+require 'huffman/static/leaf_node'
 
 module Huffman
   module Static
@@ -13,25 +14,55 @@ module Huffman
       end
 
       def encode!
-        codes = @input_stream.read.chars.map(&:to_sym)
-        tree = build_tree(codes.frequencies)
-        paths = tree.paths
+        codes = @input_stream.read.chars.map(&:ord)
+        lengths = build_tree(codes.frequencies).paths.each_with_object({}) do |(code, path),  lengths|
+          lengths[code] = path.size
+        end
 
-        @output_stream.puts paths
-        @output_stream.puts(codes.map { |c| paths[c] }.join)
+        paths = build_tree2(lengths).paths
+
+        @output_stream.write lengths.size.chr
+        @output_stream.write lengths.map { |code, lenght| "#{ code.chr } #{ lengths[code].chr }" }.join
+
+        bitset = codes.each_with_object(Bis.new(0)) do |code, bitset|
+          bitset.concat(paths[code])
+        end
+
+        bitset.each_byte do |byte|
+        end
+
+        @output_stream.write codes.map { |c| paths[c] }.join
       end
 
       private
 
+      def build_tree2(lengths)
+        old_array = []
+        lengths.max_by { |code| lengths[code] }.last.downto(0).each do |i|
+          new_array = lengths.select { |_code, length| length == i }
+                             .map { |code, _lenght| LeafNode.new(1, code) }
+
+          old_array.each_slice(2) do |i, j|
+            new_array << LinkNode.new(i.value + j.value, left: i, right: j)
+          end
+
+          old_array = new_array
+        end
+
+        old_array.pop
+      end
+
       def build_tree(frequencies)
         nodes = nodes_for_frequencies(frequencies).tap { |nodes|
-          nodes << combine_nodes(nodes.pop, nodes.pop) until nodes.size == 1
+          until nodes.size == 1
+            nodes << combine_nodes(nodes.pop, nodes.pop)
+          end
         }.pop
       end
 
       def nodes_for_frequencies(frequencies)
-        frequencies.each.each_with_object(PQueue.new { |a, b| a.value < b.value }) do |(code, frequency), queue|
-          queue << ValueNode.new(frequency, code)
+        frequencies.each.each_with_object(PQueue.new { |a, b| a.value > b.value }) do |(code, frequency), queue|
+          queue << LeafNode.new(frequency, code)
         end
       end
 

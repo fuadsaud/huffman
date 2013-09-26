@@ -1,8 +1,7 @@
 module Huffman
   module Static
-    class LinkNode
-      attr_accessor :parent, :left, :right
-      attr_reader :value
+    class LinkNode < Node
+      attr_accessor :left, :right
 
       def initialize(value, parent: nil, left: nil, right: nil)
         @value  = value
@@ -13,18 +12,6 @@ module Huffman
 
       def leaf?
         false
-      end
-
-      def <=>(other)
-        value <=> other.value
-      end
-
-      def +(other)
-        value + other.to_i
-      end
-
-      def to_i
-        value
       end
 
       def paths(current_path: Bis.new(0))
