@@ -8,7 +8,7 @@ case ARGV.first
 when 'encode'
   Huffman::Static::Encoder.new(STDIN, STDOUT).encode!
 when 'decode'
-  Huffman::Decoder.new(STDIN, STDOUT).decode!
+  Huffman::Static::Decoder.new(STDIN, STDOUT).decode!
 else
   puts 'invalid command'
 end

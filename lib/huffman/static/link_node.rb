@@ -14,9 +14,9 @@ module Huffman
         false
       end
 
-      def paths(current_path: Bis.new(1))
-        @left.paths(current_path: current_path.concat(0)).merge(
-          @right.paths(current_path: current_path.concat(1))
+      def codewords(current_path: Bis.new(1))
+        @left.codewords(current_path: current_path.concat(0)).merge(
+          @right.codewords(current_path: current_path.concat(1))
         )
       end
     end

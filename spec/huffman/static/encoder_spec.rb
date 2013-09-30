@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Huffman::Static::Encoder do
   describe '#encode!' do
-    let(:data) { 'fuad saud' }
+    let(:data) { 'abcd' }
     let(:input) { StringIO.new(data) }
     let(:output) { StringIO.new }
     subject { output.string }
@@ -12,12 +12,11 @@ describe Huffman::Static::Encoder do
     end
 
     it 'encodes, duh!' do
-      hex = [0x61, 0x73, 0x69, 0x64, 0x73, 0x61, 0x75, 0x64, 0x0a,
-             0x04, 0x61, 0x20, 0x03, 0x62, 0x20, 0x03, 0x63, 0x20,
-             0x02, 0x64, 0x20, 0x01, 0x31, 0x31, 0x0a, 0x67, 0x9f]
+      dec = [4, 97,   3,  98,   3,  99,   2, 100,   1, 103, 159]
 
-      lol = hex.map(&:chr).join
-      expect(subject).to eq lol
+      lol = subject
+      lol.force_encoding 'ASCII-8BIT'
+      expect(lol.codepoints).to eq dec
     end
   end
 end

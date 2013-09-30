@@ -13,7 +13,7 @@ module Huffman
         true
       end
 
-      def paths(current_path: Bis.new(0))
+      def codewords(current_path: Bis.new(0))
         { code => current_path }
       end
 
