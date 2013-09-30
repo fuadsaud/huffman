@@ -15,9 +15,13 @@ module Huffman
       end
 
       def codewords(current_path: Bis.new(1))
-        @left.codewords(current_path: current_path.concat(0)).merge(
-          @right.codewords(current_path: current_path.concat(1))
+        left.codewords(current_path: current_path.concat(0)).merge(
+          right.codewords(current_path: current_path.concat(1))
         )
+      end
+
+      def walk(&block)
+        (yield(self).zero? ? left : right).walk(&block)
       end
     end
   end

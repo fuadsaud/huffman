@@ -1,4 +1,4 @@
-require 'powerpack'
+require 'powerpack/enumerable/frequencies'
 require 'huffman/static'
 
 module Huffman
@@ -6,16 +6,15 @@ module Huffman
     class Encoder
       extend Forwardable
 
-      def_delegators :@in, :read
-      def_delegators :@out, :write
-
       def initialize(input, output)
         @in = input
         @out = output
       end
 
       def encode!
-        codes = read.chars.map(&:ord)
+        codes = read.bytes
+
+        fail 'No data to encode' if codes.empty?
 
         tree = build_tree_from_frequencies(codes.frequencies)
 
@@ -30,6 +29,9 @@ module Huffman
       end
 
       private
+
+      def_delegators :@in, :read
+      def_delegators :@out, :write
 
       def write_header(lengths)
         write lengths.size.chr
