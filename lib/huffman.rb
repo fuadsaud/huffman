@@ -1,3 +1,4 @@
+require 'logger'
 require 'huffman/version'
 require 'huffman/static'
 require 'huffman/static/encoder'

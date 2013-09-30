@@ -6,32 +6,52 @@ module Huffman
     class Encoder
       extend Forwardable
 
-      def initialize(input, output)
+      def initialize(input: STDIN, output: STDOUT, logger: nil)
         @in = input
         @out = output
+        @logger = logger || Logger.new(STDERR).tap { |l|
+          l.formatter = ->(severity, datetime, progname, msg) { "\t#{ msg }\n" }
+        }
       end
 
       def encode!
+        info "Reading data."
         codes = read.bytes
 
-        fail 'No data to encode' if codes.empty?
+        fail 'No data to encode.' if codes.empty?
+
+        info "Input has #{ codes.size } bytes."
+
+        info "Building tree..."
 
         tree = build_tree_from_frequencies(codes.frequencies)
 
         lengths = codeword_lengths_for_tree(tree)
 
+        info "#{ lengths.size } leaves."
+
         codewords = build_tree_from_codewords_lengths(lengths).codewords
+
+        info "Encoding..."
 
         coding = coding_for(codes, codewords)
 
+        info "Done. Output has " +
+             "#{ 1 + lengths.size  * 2 + coding.size.fdiv(8.0).ceil } bytes."
+
+        info "Writing data."
+
         write_header(lengths)
         write_coding(coding)
+
+        info "Done."
       end
 
       private
 
       def_delegators :@in, :read
       def_delegators :@out, :write
+      def_delegators :@logger, :debug, :info, :warn, :error
 
       def write_header(lengths)
         write lengths.size.chr

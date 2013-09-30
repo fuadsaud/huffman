@@ -6,9 +6,9 @@ require 'huffman'
 
 case ARGV.first
 when 'encode'
-  Huffman::Static::Encoder.new(STDIN, STDOUT).encode!
+  Huffman::Static::Encoder.new.encode!
 when 'decode'
-  Huffman::Static::Decoder.new(STDIN, STDOUT).decode!
+  Huffman::Static::Decoder.new.decode!
 else
-  puts 'invalid command'
+  STDERR.puts 'invalid command'
 end
