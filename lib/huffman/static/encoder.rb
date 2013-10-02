@@ -54,7 +54,7 @@ module Huffman
       def_delegators :@logger, :debug, :info, :warn, :error
 
       def write_header(lengths)
-        write lengths.size.chr
+        write lengths.size.-(1).chr
         write lengths.map { |code, length|
           "#{ code.chr }#{ length.chr }"
         }.join

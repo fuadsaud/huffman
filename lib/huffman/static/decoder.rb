@@ -18,9 +18,9 @@ module Huffman
 
         data = read.bytes
 
-        info "Input has #{ data.size }."
+        info "Input has #{ data.size } bytes."
 
-        header_size = data.shift
+        header_size = data.shift + 1
 
         info "Found #{ header_size } codes."
 
@@ -70,8 +70,9 @@ module Huffman
 
       def code_for_path(codewords, path)
         codewords
-          .detect(->{ [nil] }) { |_code, codeword| codeword.to_s == path.to_s }
-          .first
+          .detect(->{ [nil] }) { |_code, codeword|
+            codeword.size == path.size && codewords == path
+          }.first
       end
 
       def concat_bytes(bytes)
