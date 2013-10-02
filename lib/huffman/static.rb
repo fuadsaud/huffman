@@ -46,7 +46,7 @@ module Huffman
     end
 
     def self.new_node_priority_queue
-      PQueue.new { |a, b| a.value > b.value }
+      PQueue.new { |a, b| a.value < b.value }
     end
   end
 end
